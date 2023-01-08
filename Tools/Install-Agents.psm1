@@ -1,4 +1,4 @@
-function Deploy-Sysmon {
+function Install-Sysmon {
     <#
     .SYNOPSIS
     Deploys Sysmon to a target PC and configures it with a specified configuration file.
@@ -74,7 +74,7 @@ function Deploy-Sysmon {
     Invoke-Command -ComputerName $TargetPC -Credential $Credentials -ScriptBlock {
         # Check if its running
         If((Get-Service *sysmon*) -and (-not $Using:OverrideConfig)){
-            return "Sysmon already deployed on $Using:TargetPC`t(Re-run with -OverrideConfig to force the new configuration.)"
+            return "Sysmon already installed on $Using:TargetPC`t(Re-run with -OverrideConfig to force the new configuration.)"
         }
         # Check hash
         Get-FileHash -Algorithm SHA256 -Path "$Using:TargetDirectory\$Using:SysmonFileStripped"
@@ -86,4 +86,4 @@ function Deploy-Sysmon {
     } -ErrorAction Stop
 
 }
-Export-ModuleMember Deploy-Sysmon
+Export-ModuleMember Install-Sysmon

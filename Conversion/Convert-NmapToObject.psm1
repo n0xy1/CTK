@@ -52,7 +52,7 @@ function Convert-NmapToObject()
                 OpenPorts = @()
             }
 			# Extract state element of status:
-			if ($hostnode.Status -ne $null -and $hostnode.Status.length -ne 0) { $entry.Status = $hostnode.status.state.Trim() }  
+			if ($null -ne $hostnode.Status -and $hostnode.Status.length -ne 0) { $entry.Status = $hostnode.status.state.Trim() }  
 			if ($entry.Status.length -lt 2) { $entry.Status = "<no-status>" }
 
 			# Extract computer names provided by user or through PTR record, but avoid duplicates and allow multiple names.
@@ -65,13 +65,13 @@ function Convert-NmapToObject()
                 {
                     ForEach ($namer in $hname.name)
                     {
-                        if ($namer -ne $null -and $namer.length -ne 0 -and $namer.IndexOf(".") -ne -1) 
+                        if ($null -ne $namer -and $namer.length -ne 0 -and $namer.IndexOf(".") -ne -1) 
                         {
                             #Only append to temp variable if it would be unique.
                             if($tempFQDN.IndexOf($namer.tolower()) -eq -1)
                             { $tempFQDN = $tempFQDN + " " + $namer.tolower() }
                         }
-                        elseif ($namer -ne $null -and $namer.length -ne 0)
+                        elseif ($null -ne $namer -and $namer.length -ne 0)
                         {
                             #Only append to temp variable if it would be unique.
                             if($tempHostName.IndexOf($namer.tolower()) -eq -1)
@@ -104,21 +104,21 @@ function Convert-NmapToObject()
 				if ($addr.addrtype -eq "ipv6") { $entry.IPv6 += $addr.addr + " "}
 				if ($addr.addrtype -eq "mac")  { $entry.MAC  += $addr.addr + " "}
 			}        
-			if ($entry.IPv4 -eq $null) { $entry.IPv4 = "<no-ipv4>" } else { $entry.IPv4 = $entry.IPv4.Trim()}
-			if ($entry.IPv6 -eq $null) { $entry.IPv6 = "<no-ipv6>" } else { $entry.IPv6 = $entry.IPv6.Trim()}
-			if ($entry.MAC  -eq $null) { $entry.MAC  = "<no-mac>"  } else { $entry.MAC  = $entry.MAC.Trim() }
+			if ($null -eq $entry.IPv4) { $entry.IPv4 = "<no-ipv4>" } else { $entry.IPv4 = $entry.IPv4.Trim()}
+			if ($null -eq $entry.IPv6) { $entry.IPv6 = "<no-ipv6>" } else { $entry.IPv6 = $entry.IPv6.Trim()}
+			if ($null -eq $entry.MAC) { $entry.MAC  = "<no-mac>"  } else { $entry.MAC  = $entry.MAC.Trim() }
 
 
 			# Process all ports from <ports><port>, and note that <port> does not contain an array if it only has one item in it.
             # This could be parsed out into separate properties, but that would be overkill.  We still want to be able to use
             # simple regex patterns to do our filtering afterwards, and it's helpful to have the output look similar to
             # the console output of nmap by itself for easier first-time comprehension.  
-			if ($hostnode.ports.port -eq $null) { $entry.Ports = "<no-ports>" ; $entry.Services = "<no-services>" } 
+			if ($null -eq $hostnode.ports.port) { $entry.Ports = "<no-ports>" ; $entry.Services = "<no-services>" } 
 			else 
 			{
 				ForEach ($porto in $hostnode.ports.port)
                 {
-					if ($porto.service.name -eq $null) { $service = "unknown" } else { $service = $porto.service.name } 
+					if ($null -eq $porto.service.name) { $service = "unknown" } else { $service = $porto.service.name } 
 					$entry.Ports += $porto.state.state + ":" + $porto.protocol + ":" + $porto.portid + ":" + $service + $OutputDelimiter 
                     # add the open ports to the openports array (for kibana analytics)
                     $entry.OpenPorts += $porto.portid
@@ -126,15 +126,15 @@ function Convert-NmapToObject()
                     if ($porto.state.state -like "open*" -and ($porto.service.tunnel.length -gt 2 -or $porto.service.product.length -gt 2 -or $porto.service.proto.length -gt 2)) { $entry.Services += $porto.protocol + ":" + $porto.portid + ":" + $service + ":" + ($porto.service.product + " " + $porto.service.version + " " + $porto.service.tunnel + " " + $porto.service.proto + " " + $porto.service.rpcnum).Trim() + " <" + ([Int] $porto.service.conf * 10) + "%-confidence>$OutputDelimiter" }
 				}
 				$entry.Ports = $entry.Ports.Trim()
-                if ($entry.Services -eq $null) { $entry.Services = "<no-services>" } else { $entry.Services = $entry.Services.Trim() }
-                if ($entry.Services -ne $null) { $entry.Services = $entry.Services.Trim() } 
+                if ($null -eq $entry.Services) { $entry.Services = "<no-services>" } else { $entry.Services = $entry.Services.Trim() }
+                if ($null -ne $entry.Services) { $entry.Services = $entry.Services.Trim() } 
 			}
 
 
 			# Extract fingerprinted OS type and percent of accuracy.
 			ForEach ($osm in $hostnode.os.osmatch) {$entry.OS += $osm.name + " <" + ([String] $osm.accuracy) + "%-accuracy>$OutputDelimiter"} 
             ForEach ($osc in $hostnode.os.osclass) {$entry.OS += $osc.type + " " + $osc.vendor + " " + $osc.osfamily + " " + $osc.osgen + " <" + ([String] $osc.accuracy) + "%-accuracy>$OutputDelimiter"}  
-            if ($entry.OS -ne $null -and $entry.OS.length -gt 0)
+            if ($null -ne $entry.OS -and $entry.OS.length -gt 0)
             {
                $entry.OS = $entry.OS.Replace("  "," ")
                $entry.OS = $entry.OS.Replace("<%-accuracy>","") #Sometimes no osmatch.
@@ -146,19 +146,19 @@ function Convert-NmapToObject()
             # Extract script output, first for port scripts, then for host scripts.
             ForEach ($pp in $hostnode.ports.port)
             {
-                if ($pp.script -ne $null) { 
+                if ($null -ne $pp.script) { 
                     $entry.Script += "<PortScript id=""" + $pp.script.id + """>$OutputDelimiter" + ($pp.script.output -replace "`n","$OutputDelimiter") + "$OutputDelimiter</PortScript> $OutputDelimiter $OutputDelimiter" 
                 }
             } 
             
-            if ($hostnode.hostscript -ne $null) {
+            if ($null -ne $hostnode.hostscript) {
                 ForEach ($scr in $hostnode.hostscript.script)
                 {
                     $entry.Script += '<HostScript id="' + $scr.id + '">' + $OutputDelimiter + ($scr.output.replace("`n","$OutputDelimiter")) + "$OutputDelimiter</HostScript> $OutputDelimiter $OutputDelimiter" 
                 }
             }
             
-            if ($entry.Script -eq $null) { $entry.Script = "<no-script>" } 
+            if ($null -eq $entry.Script) { $entry.Script = "<no-script>" } 
     
             #add some metadata
             $format = "ddd MMM dd HH:mm:ss yyyy"
