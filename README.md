@@ -10,6 +10,7 @@ Cyber Tool Kit
 - [X] Deploy Sysmon Agent to a host
 - [ ] Deply filebeat to a host
 - [X] Convert IP to Snort/Suricata rule
+- [X] Auto deploy Suricata/Snort rules to a SecurityOnion Instance
 - [ ] DFIR IRIS Deployer
 - [X] Convert and push data to IRIS (assets and users)
 - [X] Convert nmap output and push to IRIS
