@@ -6,7 +6,7 @@ Cyber Tool Kit
 - [X] Host Enumeration Script (single and list of targets)
 - [X] AD Enumeration Script
 - [X] Nmap xml to elasticsearch
-- [ ] Simple binary analysis script
+- [X] VERY Simple binary analysis script
 - [X] Deploy Sysmon Agent to a host
 - [ ] Deply filebeat to a host
 - [X] Convert IP to Snort/Suricata rule

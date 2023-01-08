@@ -68,10 +68,10 @@ RequiredModules = @('ActiveDirectory')
 # FormatsToProcess = @()
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-NestedModules = @('.\Tools\Send-HashtableToElasticsearch.psm1', '.\Enumeration\Get-Enumeration.psm1', '.\Enumeration\Get-DomainEnum.psm1', '.\Conversion\Convert-NmapToObject.psm1', '.\Tools\Deploy-Agents.psm1','.\IRIS\Invoke-Iris.psm1', '.\Conversion\Helper-Funcs.psm1', '.\Conversion\Convert-IPtoSnort.psm1')
+NestedModules = @('.\Tools\Send-HashtableToElasticsearch.psm1', '.\Enumeration\Get-Enumeration.psm1', '.\Enumeration\Get-DomainEnum.psm1', '.\Conversion\Convert-NmapToObject.psm1', '.\Tools\Install-Agents.psm1','.\IRIS\Invoke-Iris.psm1', '.\Conversion\Helper-Funcs.psm1', '.\Conversion\Convert-IPtoSnort.psm1', '.\Tools\Invoke-Analysis.psm1')
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Send-HashtableToElasticsearch','Get-RemoteEnum', 'Get-RemoteDomainEnum', 'Convert-NmapToObject', 'Write-NmapToElastic', 'Convert-NmapToObject', 'Deploy-Sysmon', 'Get-IrisCaseList', 'Get-IrisCaseAssets', 'New-IrisAsset', 'Import-IrisAssetFromNmap','Import-IrisUser', 'Convert-IPtoSnort', 'Send-RulestoSecOnion','Clear-CustomSORules')
+FunctionsToExport = @('Send-HashtableToElasticsearch','Get-RemoteEnum', 'Get-RemoteDomainEnum', 'Convert-NmapToObject', 'Write-NmapToElastic', 'Convert-NmapToObject', 'Install-Sysmon', 'Get-IrisCaseList', 'Get-IrisCaseAssets', 'New-IrisAsset', 'Import-IrisAssetFromNmap','Import-IrisUser', 'Convert-IPtoSnort', 'Send-RulestoSecOnion','Clear-CustomSORules', 'Invoke-Analysis')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
